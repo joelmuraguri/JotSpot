@@ -15,7 +15,7 @@ interface NotesDao {
     fun getAllNotes() : Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM Notes_table WHERE id=:id")
-    suspend fun getNoteById(id : Int) : Flow<NoteEntity>
+    fun getNoteById(id : Int) : Flow<NoteEntity>
 
     @Insert
     suspend fun insertNote(notes: NoteEntity)
@@ -28,11 +28,11 @@ interface NotesDao {
 
     // To be Confirmed
     @Query("DELETE FROM NOTES_TABLE")
-    suspend fun deleteAllNotes(notes: NoteEntity)
+    suspend fun deleteAllNotes()
 
     //Make query in the db based on the query or tags
-    suspend fun searchForNotes(query : String) : Flow<List<NoteEntity>>
-
-    suspend fun searchByTags() : Flow<List<NoteEntity>>
+//    suspend fun searchForNotes(query : String) : Flow<List<NoteEntity>>
+//
+//    suspend fun searchByTags() : Flow<List<NoteEntity>>
 
 }
