@@ -8,7 +8,8 @@ import com.joel.jotspot.data.db.converters.UriTypeConverter
 
 @Entity(tableName = "Notes_table")
 data class NoteEntity(
-    @PrimaryKey val id : Int,
+    @PrimaryKey(autoGenerate = true)
+    val id : Int,
     val title : String,
     val content : String,
     @TypeConverters(UriTypeConverter::class)

@@ -9,7 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EditScreen(){
+fun EditScreen(
+    viewModel: EditViewModel
+){
+
 
     Box(
         modifier = Modifier
