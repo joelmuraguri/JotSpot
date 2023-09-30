@@ -20,14 +20,11 @@ fun JotSpotNavHost(
     {
         composable(route = Screens.Home.route){
             HomeScreen(
-                onNavToEdit = {
-                    navController.navigate(Screens.EditNote.route)
-                },
-                onNavToProfile = {
-                    navController.navigate(Screens.Profile.route)
-                },
-                onNavToSearch = {
-                    navController.navigate(Screens.Search.route)
+               onNavigate = { jotSpotEvent ->
+                   navController.navigate(jotSpotEvent.route)
+               },
+                popBackStack = {
+                    navController.popBackStack()
                 }
             )
         }

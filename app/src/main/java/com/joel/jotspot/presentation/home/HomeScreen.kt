@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,14 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.joel.jotspot.R
+import com.joel.jotspot.utils.JotSpotEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
-    onNavToEdit : () -> Unit,
-    onNavToSearch : () -> Unit,
-    onNavToProfile : () -> Unit
+    onNavigate : (JotSpotEvents.Navigate) -> Unit,
+    popBackStack : () -> Unit
 ){
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -54,25 +53,20 @@ fun HomeScreen(
     LaunchedEffect(key1 = true){
         homeViewModel.uiEvents.collect{ event ->
             when(event){
-                NavEvents.NavToEditNote -> {
-                    onNavToEdit()
+                is JotSpotEvents.Navigate -> {
+                    onNavigate(event)
                 }
-                NavEvents.NavToProfile -> {
-                    onNavToProfile()
+                JotSpotEvents.PopBackStack -> {
+                    popBackStack()
                 }
-                NavEvents.SearchClick -> {
-                    onNavToSearch()
-                }
-                HomeEvents.NoteClick -> TODO()
             }
         }
     }
 
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                homeViewModel.onEvents(HomeEvents.AddNote)
+                homeViewModel.onEvents(HomeEvents.OnAddNoteClick)
             }) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -118,7 +112,6 @@ fun HomeScreen(
                 } else {
                     Image(
                         modifier = Modifier
-                            .height(200.dp)
                             .fillMaxWidth(),
                         painter = painterResource(id = R.drawable.ic_launcher_background),
                         contentDescription = null,
