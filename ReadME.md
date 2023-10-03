@@ -23,10 +23,71 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 - [Timber](https://github.com/JakeWharton/timber)- A logger with a small, extensible API which provides utility on top of Android's normal Log class.
 
 ### JotSpot Features
+- App will have the following features:
+
 <p align="center"> <img src="media/jotspot_screens.png" width="750"> </p>
 
 
+- Onboarding - checks user onboarding status, collects user information name, avatar, theme prefernce
+- Home - Displays Notes, Delete All Notes, Navigates to search and Profile, select a note to view
+- Edit Note - Create/Edit Note, Return to Home
+- Search - search for notes,displays search results, return to Home, select a note to view
+- Profile - edit user name, image and theme preference(ligh,dark mode), return to Home
+
+
 ### JotSpot Architecture Design 
+- This is the design pattern used to develop the application
+- MVVM architecture
 <p align="center"> <img src="media/jotspot_architecture.png" width="750"> </p>
+
+1. Entities models for the Notes table.
+2. Dao to make queries from SQLite DB
+3. Database
+4. Repository that contains business logic of SQLite database and the whole application
+5. Dependecy Injection to reduce bolier plate code when instiating objects, i.e, viewmodel, repository, dao, Room DB and usecases
+6. UseCases recommened for breaking down the app features to per class/object
+7. ViewModels handles lifecycle for the application
+8. Compose Screens contains the UI screens ,i.e, home, search....
+9. UI Components - This is material design components or reusable widgets.
+10. App/ Activity - This is the main activity for the application
+
+
+### Functional Requirements
+
+1. User Registration: New users can register with a unique username, select a profile image, and choose their preferred theme.
+2. Create and Edit Notes: Users can create new notes, edit existing ones, and organize them by category or tags.
+3. View and Search Notes: The app allows users to view their notes, search for specific notes tags, and sort them by date, category, or title.
+4. Profile Customization: Users can personalize their profiles by editing their username, profile image, or theme preference.
+5. Onboarding: New users go through an onboarding process to set up their profile and preferences.
+6. Data Backup: Regular data backups prevent data loss.
+7. Offline Access: Users can access and edit their notes offline, with changes syncing when back online.
+
+### Non-Functional Requirements
+
+1. Performance Testing: Undergoes rigorous performance testing to ensure responsiveness.
+2. Data Backup: Implements regular data backup to prevent data loss.
+3. Performance: The app provides a smooth and responsive user experience, even with a large number of notes. Loading times for notes and search results should be minimal.
+4. Security: User authentication should be robust to prevent unauthorized access.
+5. Usability: The user interface is intuitive and user-friendly.
+6. Scalability: The app is designed to accommodate potential future growth in terms of users and data.
+7. Theme Customization: Theme preferences is flexible, allowing users to switch between different themes.
+8. Offline Access: Users are able to access and edit their notes even when offline.
+9. Error Handling: The app handles errors gracefully.
+
+
+### Usage
+# To use the MAD Note App, follow these steps:
+
+- Clone the repository to your local machine.
+- Open the project in Android Studio.
+- Build and run the app on your Android device or emulator.
+- Register or log in to start using the app.
+- Start taking organized notes with ease using the MAD Note App!
+
+
+
+
+
+
 
 
