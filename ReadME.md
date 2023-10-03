@@ -28,11 +28,11 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 <p align="center"> <img src="media/jotspot_screens.png" width="750"> </p>
 
 
-- Onboarding - checks user onboarding status, collects user information name, avatar, theme prefernce
+- Onboarding - checks user onboarding status, collects user information name, avatar, theme preference
 - Home - Displays Notes, Delete All Notes, Navigates to search and Profile, select a note to view
 - Edit Note - Create/Edit Note, Return to Home
 - Search - search for notes,displays search results, return to Home, select a note to view
-- Profile - edit user name, image and theme preference(ligh,dark mode), return to Home
+- Profile - edit user name, image and theme preference(light,dark mode), return to Home
 
 
 ### JotSpot Architecture Design 
@@ -44,8 +44,8 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 2. Dao to make queries from SQLite DB
 3. Database
 4. Repository that contains business logic of SQLite database and the whole application
-5. Dependecy Injection to reduce bolier plate code when instiating objects, i.e, viewmodel, repository, dao, Room DB and usecases
-6. UseCases recommened for breaking down the app features to per class/object
+5. Dependency Injection to reduce boiler plate code when creating instances of objects, i.e, view-model, repository, dao, Room DB and use-cases
+6. UseCases recommend for breaking down the app features to per class/object
 7. ViewModels handles lifecycle for the application
 8. Compose Screens contains the UI screens ,i.e, home, search....
 9. UI Components - This is material design components or reusable widgets.
