@@ -27,5 +27,6 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 
 
 ### JotSpot Architecture Design 
-<img src="media/jotspot_architecture.png" width="250"/>
+<p align="center"> <img src="media/jotspot_architecture.png" width="750"> </p>
+
 
