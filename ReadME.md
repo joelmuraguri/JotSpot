@@ -23,7 +23,8 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 - [Timber](https://github.com/JakeWharton/timber)- A logger with a small, extensible API which provides utility on top of Android's normal Log class.
 
 ### JotSpot Features
-<img src="media/jotspot_screens.png" width="250"/>
+<p align="center"> <img src="media/jotspot_screens.png" width="750"> </p>
+
 
 ### JotSpot Architecture Design 
 <img src="media/jotspot_architecture.png" width="250"/>
