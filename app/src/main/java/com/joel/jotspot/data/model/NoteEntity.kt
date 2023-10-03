@@ -9,10 +9,10 @@ import com.joel.jotspot.data.db.converters.UriTypeConverter
 @Entity(tableName = "Notes_table")
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
-    val id : Int,
-    val title : String,
-    val content : String,
+    val id: Int = 0,
+    val title: String,
+    val content: String,
     @TypeConverters(UriTypeConverter::class)
-    val image : Uri,
-    val timeStamp : Long
+    val image: Uri?,
+    val timeStamp: Long
 )

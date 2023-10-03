@@ -1,5 +1,7 @@
 package com.joel.jotspot.navigation
 
+const val NOTE_ARGUMENT_KEY = "noteId"
+
 sealed class Screens(val route : String) {
 
     data object Onboarding : Screens("onboarding_route")

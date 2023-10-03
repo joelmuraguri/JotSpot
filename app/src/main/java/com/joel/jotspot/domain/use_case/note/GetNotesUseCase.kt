@@ -8,7 +8,7 @@ class GetNotesUseCase(
     private val repository: JotSpotRepository
 ) {
 
-    operator fun invoke() : Flow<List<NoteEntity>> {
+    operator fun invoke(): Flow<List<NoteEntity>> {
         return repository.allNotes
     }
 }

@@ -31,7 +31,7 @@ interface NotesDao {
     suspend fun deleteAllNotes()
 
     @Query("SELECT * FROM NOTES_TABLE WHERE title =:query OR content =:query")
-    suspend fun searchForNotes(query : String) : Flow<List<NoteEntity>>
+    fun searchForNotes(query : String) : Flow<List<NoteEntity>>
 //
 //    suspend fun searchByTags() : Flow<List<NoteEntity>>
 

@@ -5,8 +5,9 @@ import com.joel.jotspot.data.dao.TagsDao
 import com.joel.jotspot.data.model.NoteEntity
 import com.joel.jotspot.data.model.TagEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class JotSpotRepositoryImpl(
+class JotSpotRepositoryImpl @Inject constructor(
     private val notesDao: NotesDao,
     private val tagsDao: TagsDao,
 ) : JotSpotRepository {

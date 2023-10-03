@@ -2,16 +2,30 @@ package com.joel.jotspot.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joel.jotspot.data.model.NoteEntity
+import com.joel.jotspot.domain.use_case.note.NoteUseCases
 import com.joel.jotspot.navigation.Screens
 import com.joel.jotspot.utils.JotSpotEvents
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val notesUseCases : NoteUseCases
+) : ViewModel() {
 
+    val notes = notesUseCases.getNotesUseCase()
+
+    private val _state = MutableStateFlow(HomeScreenState())
+    val state : StateFlow<HomeScreenState> = _state
     private val _uiEvents = Channel<JotSpotEvents>()
     val uiEvents = _uiEvents.receiveAsFlow()
+
 
     fun onEvents(events: HomeEvents){
         when(events){
@@ -27,17 +41,27 @@ class HomeViewModel : ViewModel() {
             }
             HomeEvents.OnSearchClick -> {
                 viewModelScope.launch {
-                    _uiEvents.send(JotSpotEvents.Navigate(Screens.Search.route))
+                    _uiEvents.send(JotSpotEvents.Navigate(Screens.Search.route ))
                 }
             }
-            HomeEvents.OnNoteClick -> TODO()
+            is HomeEvents.NavToEditScreen -> {
+                viewModelScope.launch {
+                    _uiEvents.send(JotSpotEvents.Navigate(Screens.EditNote.route + "/" + "${events.noteId}"))
+                }
+            }
         }
     }
 }
+
+data class HomeScreenState(
+    val notes : List<NoteEntity> = emptyList(),
+    val loading : Boolean = true,
+    val error : String = ""
+)
 
 sealed class HomeEvents{
     data object OnAddNoteClick : HomeEvents()
     data object OnAvatarClick : HomeEvents()
     data object OnSearchClick : HomeEvents()
-    data object OnNoteClick : HomeEvents()
+    data class NavToEditScreen(val noteId : Int) : HomeEvents()
 }

@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
 
 }
 
@@ -65,6 +67,9 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
 
+    implementation(libs.lottie.compose)
+
+
     //Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.testing)
@@ -75,6 +80,13 @@ dependencies {
     annotationProcessor(libs.room.compiler)
 //    implementation(libs.room.testing)
     ksp(libs.room.compiler)
+
+    //hilt di
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    kaptAndroidTest(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
 
     testImplementation(libs.junit)
