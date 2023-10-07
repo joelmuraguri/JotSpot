@@ -46,7 +46,7 @@ class EditViewModel @Inject constructor(
                     val note = NoteEntity(
                         title = _state.value.title,
                         content = _state.value.content,
-                        image = _state.value.image!!,
+                        image = _state.value.image,
                         timeStamp = System.currentTimeMillis()
                     )
                     notesUseCases.insertNoteUseCase(note)
@@ -63,7 +63,7 @@ class EditViewModel @Inject constructor(
                     val note = NoteEntity(
                         title = _state.value.title,
                         content = _state.value.content,
-                        image = _state.value.image!!,
+                        image = _state.value.image,
                         timeStamp = System.currentTimeMillis()
                     )
                     notesUseCases.updateNotesUseCase(note)

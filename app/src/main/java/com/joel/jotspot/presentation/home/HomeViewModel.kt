@@ -44,9 +44,9 @@ class HomeViewModel @Inject constructor(
                     _uiEvents.send(JotSpotEvents.Navigate(Screens.Search.route ))
                 }
             }
-            is HomeEvents.NavToEditScreen -> {
+            is HomeEvents.OnNoteClick -> {
                 viewModelScope.launch {
-                    _uiEvents.send(JotSpotEvents.Navigate(Screens.EditNote.route + "/" + "${events.noteId}"))
+                    _uiEvents.send(JotSpotEvents.Navigate(Screens.EditNote.route + "?noteId=${events.note.id}"))
                 }
             }
         }
@@ -63,5 +63,5 @@ sealed class HomeEvents{
     data object OnAddNoteClick : HomeEvents()
     data object OnAvatarClick : HomeEvents()
     data object OnSearchClick : HomeEvents()
-    data class NavToEditScreen(val noteId : Int) : HomeEvents()
+    data class OnNoteClick(val note : NoteEntity) : HomeEvents()
 }

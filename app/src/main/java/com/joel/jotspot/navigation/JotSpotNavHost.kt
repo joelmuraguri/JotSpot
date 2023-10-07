@@ -41,9 +41,10 @@ fun JotSpotNavHost(
             )
         }
         composable(
-            route = Screens.EditNote.route,
+            route = Screens.EditNote.route + "?noteId={${NOTE_ARGUMENT_KEY}}",
             arguments = listOf(navArgument(NOTE_ARGUMENT_KEY){
                 type = NavType.IntType
+                defaultValue = -1
             }),
             enterTransition = {
                 slideInHorizontally(

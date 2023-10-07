@@ -1,6 +1,5 @@
 package com.joel.jotspot.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -66,8 +66,6 @@ fun HomeScreen(
     popBackStack : () -> Unit
 ){
 
-//    Log.DEBUG("SCREEN", "home screen")
-    Log.d("SCREEN", "home screen")
 
     val allNotes = homeViewModel.notes.collectAsState(initial = emptyList())
 
@@ -89,8 +87,8 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            HomeFAB(onNoteClick = { noteId ->
-                homeViewModel.onEvents(HomeEvents.NavToEditScreen(noteId))
+            HomeFAB( onAddNoteClick = {
+                homeViewModel.onEvents(HomeEvents.OnAddNoteClick)
             })
         },
         topBar = {
@@ -149,13 +147,37 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
 
+//        LazyColumn(
+//            modifier = Modifier
+//                .padding(paddingValues)
+//        ){
+//            item{
+//                if (allNotes.value.isEmpty()){
+//                    HomeEmptyContents()
+//                } else {
+//                    LazyVerticalGrid(
+//                        columns = GridCells.Fixed(2),
+//                        modifier = Modifier
+//                    ){
+//                        items(allNotes.value){ note ->
+//                            NoteItem(
+//                                onNoteClick = {
+//                                    homeViewModel.onEvents(HomeEvents.OnNoteClick(note))
+//                                },
+//                                noteEntity = note,
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         HandleHomeContents(
             notes = allNotes.value,
-            onNoteClick = { noteId ->
-                homeViewModel.onEvents(HomeEvents.NavToEditScreen(noteId))
+            onNoteClick = { note ->
+                homeViewModel.onEvents(HomeEvents.OnNoteClick(note))
             },
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
         )
     }
@@ -164,9 +186,11 @@ fun HomeScreen(
 @Composable
 fun HandleHomeContents(
     notes : List<NoteEntity>,
-    onNoteClick: (noteId: Int) -> Unit,
+    onNoteClick: (note : NoteEntity) -> Unit,
     modifier: Modifier
 ){
+
+
     if (notes.isEmpty()){
         HomeEmptyContents(modifier)
     } else{
@@ -184,10 +208,7 @@ fun HomeEmptyContents(
 ){
 
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.empty_list))
-//    val progress by animateLottieCompositionAsState(
-//        composition = composition,
-//        iterations = LottieConstants.IterateForever,
-//    )
+
 
     Box(
         contentAlignment = Alignment.Center,
@@ -195,7 +216,6 @@ fun HomeEmptyContents(
             .padding(24.dp)
             .fillMaxSize()
     ) {
-//        LottieAnimation(composition = composition, progress = progress)
         LottieAnimation(composition = composition, iterations = LottieConstants.IterateForever)
     }
 }
@@ -204,14 +224,13 @@ fun HomeEmptyContents(
 @Composable
 fun HomeNotesContents(
     notesList : List<NoteEntity>,
-    onNoteClick : (noteId : Int) -> Unit,
+    onNoteClick : (note : NoteEntity) -> Unit,
     modifier: Modifier = Modifier
 ){
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .height(500.dp)
     ){
         items(notesList){ note ->
             NoteItem(
@@ -226,7 +245,7 @@ fun HomeNotesContents(
 
 @Composable
 fun NoteItem(
-    onNoteClick : (noteId : Int) -> Unit,
+    onNoteClick : (note : NoteEntity) -> Unit,
     noteEntity: NoteEntity,
     modifier: Modifier = Modifier
 ){
@@ -235,27 +254,27 @@ fun NoteItem(
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 5.dp
         ),
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(12.dp),
         modifier = modifier
             .padding(horizontal = 12.dp)
-            .clickable { onNoteClick(noteEntity.id) }
+            .clickable { onNoteClick(noteEntity) }
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+        ) {
             Text(
                 text = noteEntity.title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 22.sp
             )
             Text(
                 text = noteEntity.content,
                 fontWeight = FontWeight.Light,
-                fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = noteEntity.timeStamp.toString(),
                 fontWeight = FontWeight.ExtraLight,
-                fontSize = 16.sp
             )
         }
     }
@@ -263,10 +282,10 @@ fun NoteItem(
 
 @Composable
 fun HomeFAB(
-    onNoteClick : (noteId : Int) -> Unit,
+    onAddNoteClick : () -> Unit,
 ){
     FloatingActionButton(onClick = {
-        onNoteClick(-1)
+        onAddNoteClick()
     }) {
         Row(
             horizontalArrangement = Arrangement.Center,

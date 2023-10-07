@@ -10,7 +10,7 @@ fun EditTextFields(
     value : String,
     onValueChange : (String) -> Unit,
     modifier : Modifier = Modifier,
-    maxLines : Int = 1,
+    maxLines : Int,
     placeholder : String
 ){
 

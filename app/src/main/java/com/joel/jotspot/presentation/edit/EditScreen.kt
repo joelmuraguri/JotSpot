@@ -71,14 +71,16 @@ fun EditScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            EditTextFields(value = state.content,
+            EditTextFields(
+                value = state.content,
                 onValueChange = {
                       viewModel.onEvents(EditEvents.OnContentChange(it))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxSize(),
-                placeholder = "Type Something Here..."
+                placeholder = "Start writing from here...",
+                maxLines = 100
             )
         }
     }
