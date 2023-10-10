@@ -18,6 +18,7 @@ import com.joel.jotspot.presentation.edit.EditScreen
 import com.joel.jotspot.presentation.edit.EditViewModel
 import com.joel.jotspot.presentation.home.HomeScreen
 import com.joel.jotspot.presentation.home.HomeViewModel
+import com.joel.jotspot.presentation.notes.NotesScreen
 import com.joel.jotspot.presentation.profile.ProfileScreen
 import com.joel.jotspot.presentation.search.SearchScreen
 
@@ -39,6 +40,15 @@ fun JotSpotNavHost(
                     navController.popBackStack()
                 },
             )
+        }
+        composable(
+            route = Screens.NoteScreen.route + "?noteBookId={${NOTE_BOOK_ARGUMENT_KEY}}",
+            arguments = listOf(navArgument(NOTE_BOOK_ARGUMENT_KEY){
+                type = NavType.IntType
+                defaultValue = -1
+            })
+        ){
+            NotesScreen()
         }
         composable(
             route = Screens.EditNote.route + "?noteId={${NOTE_ARGUMENT_KEY}}",
