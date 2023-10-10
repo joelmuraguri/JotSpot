@@ -1,16 +1,15 @@
-package com.joel.jotspot.data.repository
+package com.joel.jotspot.data.repository.impl
 
 import com.joel.jotspot.data.dao.NotesDao
 import com.joel.jotspot.data.dao.TagsDao
 import com.joel.jotspot.data.model.NoteEntity
-import com.joel.jotspot.data.model.TagEntity
+import com.joel.jotspot.data.repository.NotesRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class JotSpotRepositoryImpl @Inject constructor(
+class NotesRepository @Inject constructor(
     private val notesDao: NotesDao,
-    private val tagsDao: TagsDao,
-) : JotSpotRepository {
+) : NotesRepo {
 
     override val allNotes: Flow<List<NoteEntity>> = notesDao.getAllNotes()
 
@@ -34,20 +33,5 @@ class JotSpotRepositoryImpl @Inject constructor(
         return notesDao.deleteAllNotes()
     }
 
-    override suspend fun searchByQuery(query: String): Flow<List<NoteEntity>> {
-        return notesDao.searchForNotes(query)
-    }
-
-    override fun getAllTags(): Flow<List<TagEntity>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun insertTag(tagEntity: TagEntity) {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteAllTags() {
-        TODO("Not yet implemented")
-    }
 
 }
