@@ -9,9 +9,10 @@ import com.joel.jotspot.data.dao.TagsDao
 import com.joel.jotspot.data.model.NoteEntity
 import com.joel.jotspot.data.model.TagEntity
 import com.joel.jotspot.data.db.converters.UriTypeConverter
+import com.joel.jotspot.data.model.NoteBookEntity
 
 @Database(
-    entities = [NoteEntity::class, TagEntity::class],
+    entities = [NoteEntity::class, TagEntity::class, NoteBookEntity::class],
     version = 1,
     exportSchema = false
 )

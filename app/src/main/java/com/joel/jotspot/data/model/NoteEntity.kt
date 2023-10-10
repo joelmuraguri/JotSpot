@@ -1,6 +1,7 @@
 package com.joel.jotspot.data.model
 
 import android.net.Uri
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -20,6 +21,8 @@ import com.joel.jotspot.data.db.converters.UriTypeConverter
     ]
 )
 data class NoteEntity(
+    @ColumnInfo(name = "noteBookId", index = true)
+    val noteBookId : Int,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val title: String,

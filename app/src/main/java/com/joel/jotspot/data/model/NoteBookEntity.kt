@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity("NoteBook_Table")
 data class NoteBookEntity(
-    @PrimaryKey(autoGenerate = true) val noteBookId : Int,
+    @PrimaryKey(autoGenerate = true)
+    val noteBookId : Int = 0,
     val title : String,
 )
