@@ -2,6 +2,7 @@ package com.joel.jotspot.data.di
 
 import android.app.Application
 import androidx.room.Room
+import com.joel.jotspot.data.dao.NoteBookDao
 import com.joel.jotspot.data.dao.NotesDao
 import com.joel.jotspot.data.dao.TagsDao
 import com.joel.jotspot.data.db.JotSpotDatabase
@@ -32,6 +33,12 @@ object DatabaseModule {
     @Singleton
     fun providesNotesDao(database: JotSpotDatabase) : NotesDao{
         return database.notesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesNoteBookDao(database: JotSpotDatabase) : NoteBookDao{
+        return database.noteBooksDao()
     }
 
     @Provides
