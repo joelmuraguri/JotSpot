@@ -76,7 +76,7 @@ This app leverages Room for local data storage and Jetpack Compose for creating 
 
 
 ### Usage
-# To use the MAD Note App, follow these steps:
+# To use the JotSpot Note App, follow these steps:
 
 - Clone the repository to your local machine.
 - Open the project in Android Studio.
