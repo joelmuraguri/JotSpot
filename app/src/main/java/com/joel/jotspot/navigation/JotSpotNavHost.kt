@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,7 +17,9 @@ import com.joel.jotspot.presentation.edit.EditScreen
 import com.joel.jotspot.presentation.edit.EditViewModel
 import com.joel.jotspot.presentation.home.HomeScreen
 import com.joel.jotspot.presentation.home.HomeViewModel
+import com.joel.jotspot.presentation.notes.NoteScreenEvents
 import com.joel.jotspot.presentation.notes.NotesScreen
+import com.joel.jotspot.presentation.notes.NotesViewModel
 import com.joel.jotspot.presentation.profile.ProfileScreen
 import com.joel.jotspot.presentation.search.SearchScreen
 
@@ -32,6 +33,7 @@ fun JotSpotNavHost(
         startDestination = Screens.Home.route
     ) {
         composable(route = Screens.Home.route){
+            val homeViewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
                onNavigate = { jotSpotEvent ->
                    navController.navigate(jotSpotEvent.route)
@@ -39,6 +41,7 @@ fun JotSpotNavHost(
                 popBackStack = {
                     navController.popBackStack()
                 },
+                homeViewModel = homeViewModel
             )
         }
         composable(
@@ -47,7 +50,18 @@ fun JotSpotNavHost(
                 type = NavType.IntType
                 defaultValue = -1
             })
-        ){
+        ){navBackStackEntry ->
+            val noteViewModel = hiltViewModel<NotesViewModel>()
+
+            val noteBookId =  navBackStackEntry.arguments!!.getInt(NOTE_BOOK_ARGUMENT_KEY)
+            LaunchedEffect(key1 = noteBookId){
+                noteViewModel.onEvents(NoteScreenEvents.GetSelectedNote(noteBookId))
+            }
+
+            val selectedNoteBook by noteViewModel.selectedNoteBook.collectAsState()
+            LaunchedEffect(key1 = selectedNoteBook){
+
+            }
             NotesScreen()
         }
         composable(

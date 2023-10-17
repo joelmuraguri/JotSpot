@@ -47,7 +47,8 @@ class EditViewModel @Inject constructor(
                         title = _state.value.title,
                         content = _state.value.content,
                         image = _state.value.image,
-                        timeStamp = System.currentTimeMillis()
+                        timeStamp = _state.value.timeStamp,
+                        noteBookId = 2
                     )
                     notesUseCases.insertNoteUseCase(note)
                     _uiEvents.send(JotSpotEvents.Navigate(Screens.Home.route))
@@ -64,7 +65,8 @@ class EditViewModel @Inject constructor(
                         title = _state.value.title,
                         content = _state.value.content,
                         image = _state.value.image,
-                        timeStamp = System.currentTimeMillis()
+                        timeStamp = _state.value.timeStamp,
+                        noteBookId = 2
                     )
                     notesUseCases.updateNotesUseCase(note)
                     _uiEvents.send(JotSpotEvents.Navigate(Screens.Home.route))

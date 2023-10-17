@@ -1,28 +1,20 @@
 package com.joel.jotspot.presentation.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -45,70 +37,144 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.joel.jotspot.R
-import com.joel.jotspot.data.model.NoteEntity
+import com.joel.jotspot.data.model.NoteBookEntity
+import com.joel.jotspot.presentation.home.components.NoteBookDialog
+import com.joel.jotspot.presentation.home.components.NoteBookItem
 import com.joel.jotspot.utils.JotSpotEvents
+import com.joel.jotspot.utils.LoadingAnimation
+import com.joel.jotspot.utils.RequestState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
-    onNavigate : (JotSpotEvents.Navigate) -> Unit,
+    onNavigate :(JotSpotEvents.Navigate) -> Unit,
     popBackStack : () -> Unit
-){
+) {
 
+    val state = homeViewModel.state.value
 
-    val allNotes = homeViewModel.notes.collectAsState(initial = emptyList())
+    val allNoteBooks by homeViewModel.allNoteBooks.collectAsState()
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val isCollapsed = remember  { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7} }
-
-    LaunchedEffect(key1 = true){
-        homeViewModel.uiEvents.collect{ event ->
-            when(event){
+    LaunchedEffect(key1 = true) {
+        homeViewModel.uiEvents.collect { event ->
+            when (event) {
                 is JotSpotEvents.Navigate -> {
                     onNavigate(event)
                 }
+
                 JotSpotEvents.PopBackStack -> {
                     popBackStack()
                 }
+
             }
         }
     }
 
-    Scaffold(
-        floatingActionButton = {
-            HomeFAB( onAddNoteClick = {
-                homeViewModel.onEvents(HomeEvents.OnAddNoteClick)
-            })
+
+    HandleHomeScreenState(
+        allNoteBooks = allNoteBooks,
+        showDialog = state.showDialog,
+        onDismissRequest = {
+              homeViewModel.onEvents(HomeScreenEvents.DismissDialog)
         },
+        value = state.noteBookTitle,
+        onValueChange = { title ->
+             homeViewModel.onEvents(HomeScreenEvents.OnNoteBookTitleChange(title))
+        },
+        onSaveNoteBook = {
+             homeViewModel.onEvents(HomeScreenEvents.SaveNoteBook)
+        },
+        onNavToProfile = {
+            homeViewModel.onEvents(HomeScreenEvents.NavToProfile)
+        },
+        onAddNoteBook = {
+            homeViewModel.onEvents(HomeScreenEvents.AddNewNote)
+        },
+        onNoteBookClick = { noteBook ->
+            homeViewModel.onEvents(HomeScreenEvents.OnNoteBookClick(noteBook))
+        }
+    )
+}
+
+@Composable
+fun HandleHomeScreenState(
+    allNoteBooks : RequestState<List<NoteBookEntity>>,
+    showDialog : Boolean,
+    onDismissRequest : () -> Unit,
+    value : String,
+    onValueChange : (String) -> Unit,
+    onSaveNoteBook : () -> Unit,
+    onNavToProfile : () -> Unit,
+    onAddNoteBook: () -> Unit,
+    onNoteBookClick : (NoteBookEntity) -> Unit
+){
+
+    when(allNoteBooks){
+        RequestState.Idle -> TODO()
+        RequestState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                LoadingAnimation()
+            }
+        }
+        is RequestState.Success -> {
+            HomeContent(
+                showDialog = showDialog,
+                onDismissRequest = onDismissRequest,
+                value = value,
+                onValueChange = onValueChange,
+                onSaveNoteBook = onSaveNoteBook,
+                onNavToProfile = onNavToProfile,
+                onAddNoteBook = onAddNoteBook,
+                onNoteBookClick = onNoteBookClick,
+                allNoteBooks = allNoteBooks.data
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeContent(
+    showDialog : Boolean,
+    onDismissRequest : () -> Unit,
+    value : String,
+    onValueChange : (String) -> Unit,
+    onSaveNoteBook : () -> Unit,
+    onNavToProfile : () -> Unit,
+    onAddNoteBook: () -> Unit,
+    onNoteBookClick : (NoteBookEntity) -> Unit,
+    allNoteBooks : List<NoteBookEntity>
+ ){
+
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
+
+    Scaffold(
         topBar = {
             Box {
                 if (isCollapsed.value) {
                     TopAppBar(
-                        title = { 
-                            Text(text = "")
+                        title = {
+                            Text(
+                                text = "Hi, Joel",
+                                fontSize = 22.sp
+                            )
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent
                         ),
                         actions = {
                             IconButton(onClick = {
-                                homeViewModel.onEvents(HomeEvents.OnSearchClick)
-                            }) {
-                                Icon(imageVector = Icons.Default.Search, contentDescription = null)
-                            }
-                            IconButton(onClick = {
-                                homeViewModel.onEvents(HomeEvents.OnAvatarClick)
+                                onNavToProfile()
                             }) {
                                 Icon(imageVector = Icons.Default.Person, contentDescription = null)
                             }
@@ -117,191 +183,138 @@ fun HomeScreen(
                 } else {
                     Image(
                         modifier = Modifier
+                            .height(250.dp)
                             .fillMaxWidth(),
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
+                        painter = painterResource(id = R.drawable.jotspot_image),
                         contentDescription = null,
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.Crop
+                    )
+                    LargeTopAppBar(
+                        title = {
+
+                        },
+                        scrollBehavior = scrollBehavior,
+                        colors = TopAppBarDefaults.largeTopAppBarColors(
+                            containerColor = Color.Transparent,
+                        ),
+                        actions = {
+
+                        }
                     )
                 }
-                LargeTopAppBar(
-                    title = {
-                        Text(
-                            text = "Good Evening, Joel",
-                            fontSize = 16.sp
-                        )
-                    },
-                    scrollBehavior = scrollBehavior,
-                    colors = TopAppBarDefaults.largeTopAppBarColors(
-                        containerColor = Color.Transparent,
-                    ),
-                    actions = {
-                        IconButton(onClick = {
-                            homeViewModel.onEvents(HomeEvents.OnAvatarClick)
-                        }) {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = null)
-                        }
-                    }
-                )
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                onAddNoteBook()
+            }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
 
-//        LazyColumn(
-//            modifier = Modifier
-//                .padding(paddingValues)
-//        ){
-//            item{
-//                if (allNotes.value.isEmpty()){
-//                    HomeEmptyContents()
-//                } else {
-//                    LazyVerticalGrid(
-//                        columns = GridCells.Fixed(2),
-//                        modifier = Modifier
-//                    ){
-//                        items(allNotes.value){ note ->
-//                            NoteItem(
-//                                onNoteClick = {
-//                                    homeViewModel.onEvents(HomeEvents.OnNoteClick(note))
-//                                },
-//                                noteEntity = note,
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        val modifier = Modifier.padding(paddingValues)
 
-        HandleHomeContents(
-            notes = allNotes.value,
-            onNoteClick = { note ->
-                homeViewModel.onEvents(HomeEvents.OnNoteClick(note))
-            },
-            modifier = Modifier
-                .padding(paddingValues)
+        HandleHomeContent(
+            onNoteBookClick = onNoteBookClick,
+            noteBookList = allNoteBooks,
+            modifier = modifier
         )
+
+        if (showDialog){
+            NoteBookDialog(
+                onDismissRequest = {
+                    onDismissRequest()
+                },
+                value = value,
+                onValueChange = { title ->
+                    onValueChange(title)
+                },
+                onSaveNoteBook = {
+                    onSaveNoteBook()
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun HandleHomeContents(
-    notes : List<NoteEntity>,
-    onNoteClick: (note : NoteEntity) -> Unit,
+fun HandleHomeContent(
+    onNoteBookClick : (NoteBookEntity) -> Unit,
+    noteBookList : List<NoteBookEntity>,
     modifier: Modifier
 ){
 
+    Column {
+        HomeNoteBookContents(
+            onNoteBookClick = onNoteBookClick,
+            noteBookList = noteBookList,
+            modifier
+        )
+    }
 
-    if (notes.isEmpty()){
-        HomeEmptyContents(modifier)
-    } else{
-        HomeNotesContents(
-            notesList = notes,
-            onNoteClick = onNoteClick,
+}
+
+@Composable
+fun EmptyHomeContents(
+    modifier: Modifier
+){
+    
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+            
+            Image(painter = painterResource(id = R.drawable.add_note_book), contentDescription = null)
+            
+            Text(text = "")
+            
+        }
+    }
+}
+
+
+@Composable
+fun HomeNoteBookContents(
+    onNoteBookClick : (NoteBookEntity) -> Unit,
+    noteBookList : List<NoteBookEntity>,
+    modifier: Modifier
+){
+
+    if (noteBookList.isEmpty()){
+        EmptyHomeContents(modifier)
+    } else {
+        NoteBookLazyItems(
+            onNoteBookClick = onNoteBookClick,
+            noteBookList = noteBookList,
+            modifier
         )
     }
 }
 
-@Composable
-fun HomeEmptyContents(
-    modifier: Modifier = Modifier
-){
-
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.empty_list))
-
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .padding(24.dp)
-            .fillMaxSize()
-    ) {
-        LottieAnimation(composition = composition, iterations = LottieConstants.IterateForever)
-    }
-}
-
 
 @Composable
-fun HomeNotesContents(
-    notesList : List<NoteEntity>,
-    onNoteClick : (note : NoteEntity) -> Unit,
-    modifier: Modifier = Modifier
+fun NoteBookLazyItems(
+    onNoteBookClick : (NoteBookEntity) -> Unit,
+    noteBookList : List<NoteBookEntity>,
+    modifier: Modifier
 ){
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-    ){
-        items(notesList){ note ->
-            NoteItem(
-                onNoteClick = onNoteClick,
-                noteEntity = note,
-                modifier = modifier
+    LazyColumn{
+        items(noteBookList){noteBookItem ->
+            NoteBookItem(
+                noteBookEntity = noteBookItem,
+                onNoteBookClick = onNoteBookClick,
             )
         }
     }
 }
 
-
-@Composable
-fun NoteItem(
-    onNoteClick : (note : NoteEntity) -> Unit,
-    noteEntity: NoteEntity,
-    modifier: Modifier = Modifier
-){
-
-    Card(
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 5.dp
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier
-            .padding(horizontal = 12.dp)
-            .clickable { onNoteClick(noteEntity) }
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-        ) {
-            Text(
-                text = noteEntity.title,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = noteEntity.content,
-                fontWeight = FontWeight.Light,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = noteEntity.timeStamp.toString(),
-                fontWeight = FontWeight.ExtraLight,
-            )
-        }
-    }
-}
-
-@Composable
-fun HomeFAB(
-    onAddNoteClick : () -> Unit,
-){
-    FloatingActionButton(onClick = {
-        onAddNoteClick()
-    }) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-            )
-            Text(
-                text = "Add Note",
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            )
-        }
-    }
-}
