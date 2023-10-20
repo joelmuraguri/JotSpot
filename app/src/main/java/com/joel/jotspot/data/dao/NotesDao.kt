@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.joel.jotspot.data.model.NoteEntity
+import com.joel.jotspot.data.relations.NoteBookWithNotes
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,6 +17,9 @@ interface NotesDao {
 
     @Query("SELECT * FROM Notes_table WHERE id=:id")
     fun getNoteById(id : Int) : Flow<NoteEntity>
+
+    @Query("SELECT * FROM Notes_table WHERE noteBookId = :notebookId")
+    fun getNotesForNotebook(notebookId: Int): Flow<NoteBookWithNotes>
 
     @Insert
     suspend fun insertNote(notes: NoteEntity)
@@ -32,7 +36,8 @@ interface NotesDao {
 
     @Query("SELECT * FROM NOTES_TABLE WHERE title =:query OR content =:query")
     fun searchForNotes(query : String) : Flow<List<NoteEntity>>
-//
-//    suspend fun searchByTags() : Flow<List<NoteEntity>>
+
+    @Query("UPDATE Notes_table SET isPinned = :isPinned WHERE id = :noteId")
+    suspend fun pinNote(noteId: Int, isPinned: Boolean)
 
 }
