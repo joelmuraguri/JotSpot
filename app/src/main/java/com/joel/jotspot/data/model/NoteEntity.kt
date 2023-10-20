@@ -29,5 +29,6 @@ data class NoteEntity(
     val content: String,
     @TypeConverters(UriTypeConverter::class)
     val image: Uri?,
-    val timeStamp: Long
+    val timeStamp: Long,
+    val isPinned : Boolean = false
 )
