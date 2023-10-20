@@ -1,7 +1,6 @@
 package com.joel.jotspot.data.repository.impl
 
 import com.joel.jotspot.data.dao.NotesDao
-import com.joel.jotspot.data.dao.TagsDao
 import com.joel.jotspot.data.model.NoteEntity
 import com.joel.jotspot.data.repository.NotesRepo
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +22,14 @@ class NotesRepository @Inject constructor(
 
     override suspend fun updateNote(noteEntity: NoteEntity) {
         return notesDao.updateNotes(noteEntity)
+    }
+
+    override suspend fun pinNote(noteId: Int, isPinned: Boolean) {
+        return notesDao.pinNote(noteId, true)
+    }
+
+    override suspend fun unPinNote(noteId: Int, isPinned: Boolean) {
+        return notesDao.pinNote(noteId, false)
     }
 
     override suspend fun deleteNote(noteEntity: NoteEntity) {

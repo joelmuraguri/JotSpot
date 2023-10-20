@@ -6,5 +6,7 @@ data class NoteUseCases(
     val insertNoteUseCase: InsertNoteUseCase,
     val updateNotesUseCase: UpdateNoteUseCase,
     val deleteAllNotesUseCase: DeleteAllNotesUseCase,
-    val deleteNoteUseCase: DeleteNoteUseCase
+    val deleteNoteUseCase: DeleteNoteUseCase,
+    val pinNoteUseCase: PinNoteUseCase,
+    val unPinNoteUseCase: UnPinNoteUseCase
 )
