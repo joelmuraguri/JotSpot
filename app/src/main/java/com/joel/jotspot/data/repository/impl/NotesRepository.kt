@@ -11,6 +11,13 @@ class NotesRepository @Inject constructor(
 ) : NotesRepo {
 
     override val allNotes: Flow<List<NoteEntity>> = notesDao.getAllNotes()
+    override fun getPinnedNotesForNotebook(noteBookId: Int): Flow<List<NoteEntity>> {
+        return notesDao.getPinnedNotesForNotebook(noteBookId)
+    }
+
+    override fun getUnPinnedNotesForNotebook(noteBookId: Int): Flow<List<NoteEntity>> {
+        return notesDao.getUnpinnedNotesForNotebook(noteBookId)
+    }
 
     override fun getNoteById(id: Int): Flow<NoteEntity> {
         return notesDao.getNoteById(id)

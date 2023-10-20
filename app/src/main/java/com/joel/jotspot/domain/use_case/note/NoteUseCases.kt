@@ -8,5 +8,7 @@ data class NoteUseCases(
     val deleteAllNotesUseCase: DeleteAllNotesUseCase,
     val deleteNoteUseCase: DeleteNoteUseCase,
     val pinNoteUseCase: PinNoteUseCase,
-    val unPinNoteUseCase: UnPinNoteUseCase
+    val unPinNoteUseCase: UnPinNoteUseCase,
+    val getPinnedNotesUseCase: GetPinnedNotesUseCase,
+    val getUnPinnedNotesUseCase: GetUnPinnedNotesUseCase
 )

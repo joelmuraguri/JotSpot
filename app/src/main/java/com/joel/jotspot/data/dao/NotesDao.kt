@@ -15,6 +15,12 @@ interface NotesDao {
     @Query("SELECT * FROM NOTES_TABLE")
     fun getAllNotes() : Flow<List<NoteEntity>>
 
+    @Query("SELECT * FROM Notes_table WHERE noteBookId = :notebookId AND isPinned = 1")
+    fun getPinnedNotesForNotebook(notebookId: Int): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM Notes_table WHERE noteBookId = :notebookId AND isPinned = 0")
+    fun getUnpinnedNotesForNotebook(notebookId: Int): Flow<List<NoteEntity>>
+
     @Query("SELECT * FROM Notes_table WHERE id=:id")
     fun getNoteById(id : Int) : Flow<NoteEntity>
 

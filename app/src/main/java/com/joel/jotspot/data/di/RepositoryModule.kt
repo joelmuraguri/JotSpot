@@ -10,6 +10,8 @@ import com.joel.jotspot.domain.use_case.note.DeleteAllNotesUseCase
 import com.joel.jotspot.domain.use_case.note.DeleteNoteUseCase
 import com.joel.jotspot.domain.use_case.note.GetNoteByIdUseCase
 import com.joel.jotspot.domain.use_case.note.GetNotesUseCase
+import com.joel.jotspot.domain.use_case.note.GetPinnedNotesUseCase
+import com.joel.jotspot.domain.use_case.note.GetUnPinnedNotesUseCase
 import com.joel.jotspot.domain.use_case.note.InsertNoteUseCase
 import com.joel.jotspot.domain.use_case.note.NoteUseCases
 import com.joel.jotspot.domain.use_case.note.PinNoteUseCase
@@ -57,7 +59,9 @@ object RepositoryModule {
             deleteNoteUseCase = DeleteNoteUseCase(notesRepo),
             deleteAllNotesUseCase = DeleteAllNotesUseCase(notesRepo),
             unPinNoteUseCase = UnPinNoteUseCase(notesRepo),
-            pinNoteUseCase = PinNoteUseCase(notesRepo)
+            pinNoteUseCase = PinNoteUseCase(notesRepo),
+            getPinnedNotesUseCase = GetPinnedNotesUseCase(notesRepo),
+            getUnPinnedNotesUseCase = GetUnPinnedNotesUseCase(notesRepo)
         )
     }
 

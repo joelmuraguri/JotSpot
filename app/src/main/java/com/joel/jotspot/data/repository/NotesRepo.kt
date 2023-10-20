@@ -7,7 +7,8 @@ interface NotesRepo {
 
 
     val allNotes : Flow<List<NoteEntity>>
-
+    fun getPinnedNotesForNotebook(noteBookId : Int) : Flow<List<NoteEntity>>
+    fun getUnPinnedNotesForNotebook(noteBookId : Int) : Flow<List<NoteEntity>>
     fun getNoteById(id : Int) : Flow<NoteEntity>
 
     suspend fun insertNote(noteEntity: NoteEntity)
