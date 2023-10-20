@@ -22,6 +22,7 @@ import com.joel.jotspot.presentation.notes.NotesScreen
 import com.joel.jotspot.presentation.notes.NotesViewModel
 import com.joel.jotspot.presentation.profile.ProfileScreen
 import com.joel.jotspot.presentation.search.SearchScreen
+import com.joel.jotspot.utils.JotSpotEvents
 
 @Composable
 fun JotSpotNavHost(
@@ -55,14 +56,23 @@ fun JotSpotNavHost(
 
             val noteBookId =  navBackStackEntry.arguments!!.getInt(NOTE_BOOK_ARGUMENT_KEY)
             LaunchedEffect(key1 = noteBookId){
-                noteViewModel.onEvents(NoteScreenEvents.GetSelectedNote(noteBookId))
+                noteViewModel.onEvents(NoteScreenEvents.GetSelectedNoteBook(noteBookId))
             }
 
             val selectedNoteBook by noteViewModel.selectedNoteBook.collectAsState()
             LaunchedEffect(key1 = selectedNoteBook){
-
+                noteViewModel.onEvents(NoteScreenEvents.OnUpdateNoteScreenState(noteBookWithNotes = selectedNoteBook))
             }
-            NotesScreen()
+            NotesScreen(
+                onNavigate = {jotSpotEvents ->
+                    navController.navigate(jotSpotEvents.route)
+                },
+                popBackStack = {
+                    navController.popBackStack()
+                },
+                notesViewModel = noteViewModel,
+//                noteBookWithNotes = selectedNoteBook
+            )
         }
         composable(
             route = Screens.EditNote.route + "?noteId={${NOTE_ARGUMENT_KEY}}",
