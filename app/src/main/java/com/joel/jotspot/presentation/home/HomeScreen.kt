@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,12 +15,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -37,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,7 +52,6 @@ import com.joel.jotspot.utils.JotSpotEvents
 import com.joel.jotspot.utils.LoadingAnimation
 import com.joel.jotspot.utils.RequestState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -183,7 +186,7 @@ fun HomeContent(
                 } else {
                     Image(
                         modifier = Modifier
-                            .height(250.dp)
+                            .height(200.dp)
                             .fillMaxWidth(),
                         painter = painterResource(id = R.drawable.jotspot_image),
                         contentDescription = null,
@@ -214,13 +217,19 @@ fun HomeContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
 
-        val modifier = Modifier.padding(paddingValues)
 
-        HandleHomeContent(
-            onNoteBookClick = onNoteBookClick,
-            noteBookList = allNoteBooks,
-            modifier = modifier
-        )
+        Box(
+            contentAlignment = Alignment.TopCenter,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            HandleHomeContent(
+                onNoteBookClick = onNoteBookClick,
+                noteBookList = allNoteBooks,
+            )
+        }
+
 
         if (showDialog){
             NoteBookDialog(
@@ -243,17 +252,14 @@ fun HomeContent(
 fun HandleHomeContent(
     onNoteBookClick : (NoteBookEntity) -> Unit,
     noteBookList : List<NoteBookEntity>,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ){
 
-    Column {
-        HomeNoteBookContents(
-            onNoteBookClick = onNoteBookClick,
-            noteBookList = noteBookList,
-            modifier
-        )
-    }
-
+    HomeNoteBookContents(
+        onNoteBookClick = onNoteBookClick,
+        noteBookList = noteBookList,
+        modifier
+    )
 }
 
 @Composable
@@ -295,7 +301,6 @@ fun HomeNoteBookContents(
         NoteBookLazyItems(
             onNoteBookClick = onNoteBookClick,
             noteBookList = noteBookList,
-            modifier
         )
     }
 }
@@ -305,10 +310,12 @@ fun HomeNoteBookContents(
 fun NoteBookLazyItems(
     onNoteBookClick : (NoteBookEntity) -> Unit,
     noteBookList : List<NoteBookEntity>,
-    modifier: Modifier
 ){
 
     LazyColumn{
+        item {
+            NoteBooksBar()
+        }
         items(noteBookList){noteBookItem ->
             NoteBookItem(
                 noteBookEntity = noteBookItem,
@@ -318,3 +325,29 @@ fun NoteBookLazyItems(
     }
 }
 
+@Composable
+fun NoteBooksBar(){
+
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopStart
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "All NoteBooks",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+            }
+        }
+    }
+}

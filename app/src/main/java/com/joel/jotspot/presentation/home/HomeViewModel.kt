@@ -12,7 +12,6 @@ import com.joel.jotspot.utils.RequestState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -74,7 +73,6 @@ class HomeViewModel @Inject constructor(
     private fun getAllNoteBooks(){
         _allNoteBooks.value = RequestState.Loading
         viewModelScope.launch {
-            delay(5000L)
             noteBookUseCases.getAllNoteBooks().collect{ noteBooksList ->
                 _allNoteBooks.value = RequestState.Success(noteBooksList)
             }
