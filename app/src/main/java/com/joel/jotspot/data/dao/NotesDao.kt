@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.joel.jotspot.data.model.NoteEntity
 import com.joel.jotspot.data.relations.NoteBookWithNotes
@@ -24,6 +25,7 @@ interface NotesDao {
     @Query("SELECT * FROM Notes_table WHERE id=:id")
     fun getNoteById(id : Int) : Flow<NoteEntity>
 
+    @Transaction
     @Query("SELECT * FROM Notes_table WHERE noteBookId = :notebookId")
     fun getNotesForNotebook(notebookId: Int): Flow<NoteBookWithNotes>
 
