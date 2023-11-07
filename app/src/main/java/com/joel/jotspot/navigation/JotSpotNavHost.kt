@@ -21,8 +21,9 @@ import com.joel.jotspot.presentation.notes.NoteScreenEvents
 import com.joel.jotspot.presentation.notes.NotesScreen
 import com.joel.jotspot.presentation.notes.NotesViewModel
 import com.joel.jotspot.presentation.profile.ProfileScreen
+import com.joel.jotspot.presentation.search.SearchEvents
 import com.joel.jotspot.presentation.search.SearchScreen
-import com.joel.jotspot.utils.JotSpotEvents
+import com.joel.jotspot.presentation.search.SearchViewModel
 
 @Composable
 fun JotSpotNavHost(
@@ -57,11 +58,13 @@ fun JotSpotNavHost(
             val noteBookId =  navBackStackEntry.arguments!!.getInt(NOTE_BOOK_ARGUMENT_KEY)
             LaunchedEffect(key1 = noteBookId){
                 noteViewModel.onEvents(NoteScreenEvents.GetSelectedNoteBook(noteBookId))
+                noteViewModel.onEvents(NoteScreenEvents.GetPinnedNotes(noteBookId))
+                noteViewModel.onEvents(NoteScreenEvents.GetUnPinnedNotes(noteBookId))
             }
 
-            val selectedNoteBook by noteViewModel.selectedNoteBook.collectAsState()
-            LaunchedEffect(key1 = selectedNoteBook){
-                noteViewModel.onEvents(NoteScreenEvents.OnUpdateNoteScreenState(noteBookWithNotes = selectedNoteBook))
+            val selectedNoteBookWithNotes by noteViewModel.selectedNoteBook.collectAsState()
+            LaunchedEffect(key1 = selectedNoteBookWithNotes){
+                noteViewModel.onEvents(NoteScreenEvents.OnUpdateNoteScreenState(noteBookWithNotes = selectedNoteBookWithNotes))
             }
             NotesScreen(
                 onNavigate = {jotSpotEvents ->
@@ -71,7 +74,7 @@ fun JotSpotNavHost(
                     navController.popBackStack()
                 },
                 notesViewModel = noteViewModel,
-//                noteBookWithNotes = selectedNoteBook
+                noteBookWithNotes = selectedNoteBookWithNotes
             )
         }
         composable(
@@ -113,8 +116,33 @@ fun JotSpotNavHost(
                 }
             )
         }
-        composable(route = Screens.Search.route){
-            SearchScreen()
+        composable(
+            route = Screens.Search.route + "?noteBookId={${NOTE_BOOK_ARGUMENT_KEY}}",
+            arguments = listOf(navArgument(NOTE_BOOK_ARGUMENT_KEY){
+                type = NavType.IntType
+                defaultValue = -1
+            })
+        ){navBackStackEntry ->
+            val searchViewModel = hiltViewModel<SearchViewModel>()
+
+            val noteBookId =  navBackStackEntry.arguments!!.getInt(NOTE_BOOK_ARGUMENT_KEY)
+            LaunchedEffect(key1 = noteBookId){
+                searchViewModel.onEvents(SearchEvents.GetNoteBookWithNotes(noteBookId))
+            }
+
+            val selectedNoteBook by searchViewModel.selectedNoteBook.collectAsState()
+            LaunchedEffect(key1 = selectedNoteBook){
+                searchViewModel.onEvents(SearchEvents.UpdateSearchScreenState(noteBookWithNotes = selectedNoteBook))
+            }
+            SearchScreen(
+                onNavigate = { jotSpotEvent ->
+                    navController.navigate(jotSpotEvent.route)
+                },
+                popBackStack = {
+                    navController.popBackStack()
+                },
+                searchViewModel = searchViewModel
+            )
         }
         composable(route = Screens.Profile.route){
             ProfileScreen()
