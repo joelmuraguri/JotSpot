@@ -1,18 +1,19 @@
 package com.joel.jotspot.presentation.edit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.joel.jotspot.data.model.NoteEntity
-import com.joel.jotspot.presentation.edit.components.EditTextFields
 import com.joel.jotspot.presentation.edit.components.EditToolBar
+import com.joel.jotspot.presentation.edit.components.TransparentHintTextField
 import com.joel.jotspot.utils.JotSpotEvents
 
 @Composable
@@ -62,25 +63,32 @@ fun EditScreen(
             modifier = Modifier
                 .padding(paddingValues)
         ) {
-            EditTextFields(value = state.title,
-                onValueChange = {
-                       viewModel.onEvents(EditEvents.OnTitleChange(it))
+            TransparentHintTextField(
+                text = state.title,
+                hint = if (noteEntity != null) "" else state.titleHint,
+                onValueChange = { title ->
+                     viewModel.onEvents(EditEvents.OnTitleChange(title))
                 },
-                maxLines = 1,
-                placeholder = "Title",
-                modifier = Modifier
-                    .fillMaxWidth()
+                onFocusChange = { focusState ->
+                    viewModel.onEvents(EditEvents.ChangeTitleFocus(focusState))
+                },
+                isHintVisible = state.isTitleHintVisible,
+                singleLine = true,
+                textStyle = MaterialTheme.typography.headlineMedium
             )
-            EditTextFields(
-                value = state.content,
-                onValueChange = {
-                      viewModel.onEvents(EditEvents.OnContentChange(it))
+            Spacer(modifier = Modifier.height(10.dp))
+            TransparentHintTextField(
+                text = state.content,
+                hint = if (noteEntity != null) "" else state.contentHint,
+                onValueChange = { content ->
+                    viewModel.onEvents(EditEvents.OnContentChange(content))
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize(),
-                placeholder = "Start writing from here...",
-                maxLines = 100
+                onFocusChange = { focusState ->
+                    viewModel.onEvents(EditEvents.ChangeContentFocus(focusState = focusState))
+                },
+                isHintVisible = state.isContentHintVisible,
+                textStyle = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxHeight(),
             )
         }
     }
